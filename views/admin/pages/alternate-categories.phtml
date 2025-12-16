@@ -1,0 +1,252 @@
+<?php
+/**
+ * Created by Netivo for Elazienki Theme v2
+ * User: manveru
+ * Date: 26.09.2024
+ * Time: 16:08
+ *
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'HTTP/1.0 403 Forbidden' );
+	exit;
+}
+function _nt_tmp_get_cat_name( $category ) {
+	if ( is_int( $category ) ) {
+		$category = get_term( $category );
+	}
+	if ( $category->parent == 0 ) {
+		return $category->name;
+	}
+
+	return _nt_tmp_get_cat_name( $category->parent ) . ' > ' . $category->name;
+}
+
+?>
+
+<?php if ( $this->type == 'list' ) : ?>
+	<?php $contents = $this->contents; ?>
+    <div class="content grid">
+        <div class="grid__row">
+            <div class="grid__col grid__col--90"><h3>Istniejące treści</h3></div>
+            <div class="grid__col grid__col--10">
+                <a href="<?= admin_url( 'admin.php?page=nt_cat_man&action=add' ); ?>" class="btn">Dodaj nową treść</a>
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__col grid__col--100">
+                <table class="wp-list-table widefat fixed striped pages">
+                    <thead>
+                    <tr>
+                        <th scope="col" id="title" class="manage-column column-primary">
+                            <span>Producent</span>
+                        </th>
+                        <th scope="col" id="author" class="manage-column">
+                            <span>Kategoria</span>
+                        </th>
+                        <th scope="col" id="comments" class="manage-column">
+                            <span>Akcje</span>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="the-list">
+					<?php if ( ! empty( $contents ) ) : ?>
+						<?php foreach ( $contents as $content ) : ?>
+                            <tr class="iedit author-other level-0 post-17 type-page status-publish hentry">
+                                <td class="title" data-colname="Producent">
+									<?= $content['manufacturer']; ?>
+                                </td>
+                                <td class="author" data-colname="Kategoria">
+									<?= $content['category']; ?>
+                                </td>
+                                <td class="comments" data-colname="Akcje">
+                                    <a href="<?= admin_url( 'admin.php?page=nt_cat_man&action=edit&element=' . $content['name'] ) ?>">Edytuj</a>
+                                    <a href="<?= admin_url( 'admin.php?page=nt_cat_man&action=delete&element=' . $content['name'] ) ?>">Usuń</a>
+                                </td>
+                            </tr>
+						<?php endforeach; ?>
+					<?php else : ?>
+                        <tr>
+                            <td colspan="3">
+                                Brak treści SEO dla połączęń Producent - Kategoria.
+                            </td>
+                        </tr>
+					<?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<?php elseif ( $this->type == 'add' ) : ?>
+    <form method="post">
+        <div class="content grid">
+            <div class="grid__row">
+                <div class="grid__col grid__col--100"><h3>Dodaj nową treść</h3></div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="manufacturer" class="label">Producent</label>
+                </div>
+                <div class="grid__col grid__col--40">
+                    <select name="manufacturer" id="manufacturer" class="select">
+						<?php foreach ( $this->manufacturers as $manufacturer ) : ?>
+                            <option value="<?= $manufacturer->slug; ?>"><?= $manufacturer->name; ?></option>
+						<?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="grid__col grid__col--10">
+                    <label for="category" class="label">Kategoria</label>
+                </div>
+                <div class="grid__col grid__col--40">
+                    <select name="category" id="category" class="select">
+						<?php foreach ( $this->categories as $category ) : ?>
+                            <option value="<?= $category->term_id; ?>"><?= _nt_tmp_get_cat_name( $category ); ?></option>
+						<?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="main_title" class="label">Tytuł główny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <input type="text" name="title" class="input" id="title"/>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="description" class="label">Opis górny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+					<?php wp_editor( '', 'description', [
+						'wpautop'       => true,
+						'media_buttons' => true,
+						'textarea_name' => 'description'
+					] ); ?>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="bottom_title" class="label">Tytuł dolny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <input type="text" name="bottom_title" class="input" id="bottom_title"/>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="bottom_description" class="label">Opis dolny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+					<?php wp_editor( '', 'bottom_description', [
+						'wpautop'       => true,
+						'media_buttons' => true,
+						'textarea_name' => 'bottom_description'
+					] ); ?>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="seo_title" class="label">Tytuł meta</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <input type="text" name="seo_title" class="input" id="seo_title"/>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="seo_description" class="label">Opis meta</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <textarea class="textarea" name="seo_description" id="seo_description"></textarea>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col-100">
+                    <input type="submit" name="save_nt_cat_man" value="Dodaj" class="btn">
+                </div>
+            </div>
+        </div>
+    </form>
+<?php elseif ( $this->type == 'edit' ) : ?>
+	<?php $content = $this->content; ?>
+    <form method="post">
+        <div class="content grid">
+            <div class="grid__row">
+                <div class="grid__col grid__col--100"><h3>Edytuj treść dla producenta <?= $this->manufacturer ?> w
+                        kategorii <?= $this->category; ?></h3></div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="main_title" class="label">Tytuł główny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <input type="text" name="main_title" class="input" id="main_title"
+                           value="<?= ( ! empty( $content['title'] ) ) ? $content['title'] : ''; ?>"/>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="description" class="label">Opis górny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+					<?php wp_editor( ( ( ! empty( $content['description'] ) ) ? stripslashes( $content['description'] ) : '' ), 'description', [
+						'wpautop'       => true,
+						'media_buttons' => true,
+						'textarea_name' => 'description'
+					] ); ?>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="bottom_title" class="label">Tytuł dolny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <input type="text" name="bottom_title" class="input" id="bottom_title"
+                           value="<?= ( ! empty( $content['bottom_title'] ) ) ? $content['bottom_title'] : ''; ?>"/>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="bottom_description" class="label">Opis dolny</label>
+                </div>
+                <div class="grid__col grid__col--90">
+					<?php $bot_desc = ( ( ! empty( $content['bottom_description'] ) ) ? stripslashes( $content['bottom_description'] ) : '' );
+					if ( empty( $bot_desc ) ) {
+						$bot_desc = ( ( ! empty( $content['full_description'] ) ) ? stripslashes( $content['full_description'] ) : '' );
+					}
+					?>
+					<?php wp_editor( $bot_desc, 'bottom_description', [
+						'wpautop'       => true,
+						'media_buttons' => true,
+						'textarea_name' => 'bottom_description'
+					] ); ?>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="seo_title" class="label">Tytuł meta</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <input type="text" name="seo_title" class="input" id="seo_title"
+                           value="<?= ( ! empty( $content['seo_title'] ) ) ? $content['seo_title'] : ''; ?>"/>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col--10">
+                    <label for="seo_description" class="label">Opis meta</label>
+                </div>
+                <div class="grid__col grid__col--90">
+                    <textarea class="textarea" name="seo_description" id="seo_description">
+                        <?= ( ! empty( $content['seo_description'] ) ) ? $content['seo_description'] : ''; ?>
+                    </textarea>
+                </div>
+            </div>
+            <div class="grid__row">
+                <div class="grid__col grid__col-100">
+                    <input type="submit" name="save_nt_cat_man" value="Zapisz" class="btn">
+                </div>
+            </div>
+        </div>
+    </form>
+<?php endif; ?>
+

@@ -1,0 +1,46 @@
+{
+  "name": "netivo/wc-alternate-categories",
+  "description": "Netivo Module for Woocommerce to add alternate category tree with manufacturers.",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "version": "1.1.1",
+  "authors": [
+    {
+      "name": "netivo",
+      "email": "biuro@netivo.pl"
+    },
+    {
+      "name": "Michał Świątek",
+      "email": "michal.swiatek@netivo.pl"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:netivo/wp-core.git"
+    }
+  ],
+  "require": {
+    "php": ">=8.2",
+    "netivo/wp-core": "^1.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5 || ^11.0",
+    "brain/monkey": "^2.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Netivo\\Module\\WooCommerce\\AlternateCategories\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Netivo\\Module\\WooCommerce\\AlternateCategories\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": [
+      "@php -d zend.enable_gc=0 vendor/bin/phpunit"
+    ]
+  }
+}

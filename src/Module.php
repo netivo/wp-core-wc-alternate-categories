@@ -31,6 +31,7 @@ class Module {
 
 		add_filter( 'pre_get_posts', [ $this, 'modify_shop_query' ], 100, 1 );
 
+		new Product();
 
 		if ( is_admin() ) {
 			new Admin();

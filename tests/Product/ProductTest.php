@@ -26,6 +26,11 @@ final class ProductTest extends TestCase {
 			->with( 'woocommerce_taxonomy_archive_description_raw', \Mockery::type( 'array' ) )
 			->andReturnNull();
 
+		Functions\expect( 'add_filter' )
+			->once()
+			->with( 'woocommerce_get_breadcrumb', \Mockery::type( 'array' ), 20 )
+			->andReturnNull();
+
 		new Product();
 
 		$this->addToAssertionCount( 1 );
@@ -35,7 +40,6 @@ final class ProductTest extends TestCase {
 		// Avoid constructor expectations
 		Functions\when( 'add_filter' )->justReturn( null );
 		Functions\when( 'add_action' )->justReturn( null );
-		Functions\when( 'add_filter' )->justReturn( null );
 
 		Functions\expect( 'is_product_category' )->once()->andReturn( true );
 		Functions\expect( 'get_queried_object_id' )->once()->andReturn( 42 );
@@ -52,7 +56,6 @@ final class ProductTest extends TestCase {
 	public function test_change_title_falls_back_to_cat_and_brand_name_when_no_option_title(): void {
 		Functions\when( 'add_filter' )->justReturn( null );
 		Functions\when( 'add_action' )->justReturn( null );
-		Functions\when( 'add_filter' )->justReturn( null );
 
 		Functions\expect( 'is_product_category' )->once()->andReturn( true );
 		Functions\expect( 'get_queried_object_id' )->once()->andReturn( 5 );
@@ -70,7 +73,6 @@ final class ProductTest extends TestCase {
 		// Case 1: Not a product category
 		Functions\when( 'add_filter' )->justReturn( null );
 		Functions\when( 'add_action' )->justReturn( null );
-		Functions\when( 'add_filter' )->justReturn( null );
 
 		Functions\expect( 'is_product_category' )->once()->andReturn( false );
 		$p     = new Product();
@@ -87,9 +89,8 @@ final class ProductTest extends TestCase {
 	}
 
 	public function test_display_custom_archive_description_outputs_when_first_page_and_description_exists(): void {
-		Functions\when( 'dd_filter' )->justReturn( null );
-		Functions\when( 'add_action' )->justReturn( null );
 		Functions\when( 'add_filter' )->justReturn( null );
+		Functions\when( 'add_action' )->justReturn( null );
 
 		Functions\expect( 'is_product_category' )->once()->andReturn( true );
 		Functions\expect( 'get_queried_object_id' )->once()->andReturn( 9 );
@@ -113,7 +114,6 @@ final class ProductTest extends TestCase {
 	public function test_display_custom_archive_description_no_output_when_not_first_page_or_missing_data(): void {
 		Functions\when( 'add_filter' )->justReturn( null );
 		Functions\when( 'add_action' )->justReturn( null );
-		Functions\when( 'add_filter' )->justReturn( null );
 
 		// Scenario A: not product category
 		Functions\expect( 'is_product_category' )->once()->andReturn( false );
@@ -149,7 +149,6 @@ final class ProductTest extends TestCase {
 	public function test_hide_description_returns_empty_when_manufacturer_set_else_original(): void {
 		Functions\when( 'add_filter' )->justReturn( null );
 		Functions\when( 'add_action' )->justReturn( null );
-		Functions\when( 'add_filter' )->justReturn( null );
 
 		// manufacturer present -> empty
 		Functions\expect( 'get_query_var' )->once()->with( 'manufacturer' )->andReturn( 'brand' );

@@ -3,7 +3,7 @@
   "description": "Netivo Module for Woocommerce to add alternate category tree with manufacturers.",
   "minimum-stability": "stable",
   "license": "proprietary",
-  "version": "1.0",
+  "version": "1.0.1",
   "authors": [
     {
       "name": "netivo",

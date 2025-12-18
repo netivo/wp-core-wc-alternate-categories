@@ -30,6 +30,7 @@ class Product {
 		add_filter( 'woocommerce_page_title', array( $this, 'change_woocommerce_page_title' ) );
 		add_action( 'woocommerce_archive_description', array( $this, 'display_custom_archive_description' ) );
 		add_filter( 'woocommerce_taxonomy_archive_description_raw', [ $this, 'hide_description' ] );
+		add_filter( 'woocommerce_get_breadcrumb', [ $this, 'modify_breadcrumbs' ], 20 );
 
 		// Integrate with Rank Math SEO if available
 		if ( defined( 'RANK_MATH_VERSION' ) ) {
@@ -111,6 +112,38 @@ class Product {
 		}
 
 		return $description;
+	}
+
+	/**
+	 * Modifies WooCommerce breadcrumbs to add the brand name before categories on product category archives
+	 * when a manufacturer is selected.
+	 *
+	 * @param array $breadcrumbs The original breadcrumbs array.
+	 *
+	 * @return array The modified breadcrumbs array.
+	 */
+	public function modify_breadcrumbs( array $breadcrumbs ): array {
+		if ( is_product_category() ) {
+			$manufacturer = get_query_var( 'manufacturer' );
+
+			if ( ! empty( $manufacturer ) ) {
+				$term = get_term_by( 'slug', $manufacturer, 'product_brand' );
+				if ( ! empty( $term ) ) {
+					$new_breadcrumb = [ $term->name, get_term_link( $manufacturer, 'product_brand' ) ];
+
+					// Insert before the last item (which is the current category)
+					if ( count( $breadcrumbs ) > 0 ) {
+						$last          = array_pop( $breadcrumbs );
+						$breadcrumbs[] = $new_breadcrumb;
+						$breadcrumbs[] = $last;
+					} else {
+						$breadcrumbs[] = $new_breadcrumb;
+					}
+				}
+			}
+		}
+
+		return $breadcrumbs;
 	}
 
 	/**

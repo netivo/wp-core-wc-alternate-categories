@@ -9,9 +9,8 @@
 
 namespace Netivo\Module\WooCommerce\AlternateCategories\Admin;
 
-use Automattic\Jetpack\Status\Cache;
-use SimplePie\Category;
 use Netivo\Module\WooCommerce\AlternateCategories\Admin\Page\AlternateCategories;
+use Netivo\Module\WooCommerce\AlternateCategories\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );

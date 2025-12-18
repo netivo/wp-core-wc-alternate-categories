@@ -131,13 +131,26 @@ class Product {
 				if ( ! empty( $term ) ) {
 					$new_breadcrumb = [ $term->name, get_term_link( $manufacturer, 'product_brand' ) ];
 
-					// Insert before the last item (which is the current category)
-					if ( count( $breadcrumbs ) > 0 ) {
-						$last          = array_pop( $breadcrumbs );
-						$breadcrumbs[] = $new_breadcrumb;
-						$breadcrumbs[] = $last;
-					} else {
-						$breadcrumbs[] = $new_breadcrumb;
+					// Find the position of the first category in the breadcrumbs
+					$insert_pos = - 1;
+					$permalinks = wc_get_permalink_structure();
+					$slug       = ! empty( $permalinks['category_rewrite_slug'] ) ? $permalinks['category_rewrite_slug'] : 'product-category';
+
+					foreach ( $breadcrumbs as $index => &$breadcrumb ) {
+						if ( ! empty( $breadcrumb[1] ) && ( str_contains( $breadcrumb[1], '/' . $slug . '/' ) || str_contains( $breadcrumb[1], $slug . '/' ) ) ) {
+							if ( $insert_pos === - 1 ) {
+								$insert_pos = $index;
+							}
+							$breadcrumb[1] = self::replace_home_with_manufacturer( $breadcrumb[1], $manufacturer );
+						}
+					}
+					unset( $breadcrumb );
+
+					// If no category found (unlikely for product category archive), fallback to inserting after first item (usually Home)
+					if ( $insert_pos === - 1 && count( $breadcrumbs ) > 1 ) {
+						array_splice( $breadcrumbs, 1, 0, [ $new_breadcrumb ] );
+					} elseif ( $insert_pos !== - 1 ) {
+						array_splice( $breadcrumbs, $insert_pos, 0, [ $new_breadcrumb ] );
 					}
 				}
 			}
